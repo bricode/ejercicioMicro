@@ -56,10 +56,13 @@ public class Micro {
                 this.pasajeros[aux] = empleado;
                 aux++;
             }
+           
         }
         else {
             System.out.println("El micro esta lleno");
         }
+        
+        System.out.println("La cantidad de pasajeros es >> " + this.verCantidadPasajeros() );
     }
     
     public void bajarPasajero() {
@@ -68,6 +71,16 @@ public class Micro {
             System.err.println("El Micro está vacio");
             this.primerPasajero = null;
         }
+    }
+    
+    public int  verCantidadPasajeros() {
+        int cantPasaje = 0;
+        for (int i = 0; i < this.pasajeros.length; i++) {
+            if(this.pasajeros[i] != null) {
+                cantPasaje++;
+            }
+        }
+        return cantPasaje;
     }
     
 
