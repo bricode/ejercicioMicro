@@ -1,5 +1,8 @@
 package ejerciciomicro;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,76 +14,69 @@ package ejerciciomicro;
  * @author edgar
  */
 public class Micro {
-    
-    int lugaresSentados;
-    int lugaresParados;
-    int pasajerosSentados;
-    int pasajerosParados;
-    int lugaresDisponibles;
-    int volumen;
-    int aux = 0;
-    Empleado[] pasajeros;
+    private int lugaresSentados;
+    private int lugaresParados;
+    private int pasajerosSentados = 0;
+    private int pasajerosParados = 0;
+    private int volumen;
+    private int aux = 0;
+    List<Empleado> pasajeros;
     Empleado primerPasajero = null;
-    
     
     public Micro(int lugSentados, int lugParados, int volumen) {
         this.lugaresSentados = lugSentados;
         this.lugaresParados = lugParados;
         this.volumen = volumen;
-        this.lugaresDisponibles = lugSentados + lugParados;
-        this.pasajeros = new Empleado[this.lugaresDisponibles];
-    }
-    
+        this.pasajeros = new ArrayList<Empleado>(lugSentados + lugParados);
+    }    
     
     public boolean puedeSubir(Empleado empleado) {
-        return empleado.subir(this);
+        return empleado.subir(this) && this.lugaresDisponibles() > 0;
     }
     
     public void subirPasajero( Empleado empleado ) {
-        if(this.puedeSubir( empleado ) && this.lugaresDisponibles > 0) {
+        if(this.puedeSubir( empleado )) {
             if(this.primerPasajero == null) {
                 this.primerPasajero = empleado;
             }
             if(this.lugaresSentados > 0) {
                 this.pasajerosSentados++;
-                this.lugaresSentados--;
-                this.lugaresDisponibles--;
-                this.pasajeros[aux] = empleado;
-                aux++;
-          
-            }
-            else {
+            } else {
                 this.pasajerosParados++;
-                this.lugaresParados--;
-                this.lugaresDisponibles--;
-                this.pasajeros[aux] = empleado;
-                aux++;
-            }
-           
+            }            
+            this.pasajeros.add(empleado);
         }
         else {
             System.out.println("El micro esta lleno");
         }
         
-        System.out.println("La cantidad de pasajeros es >> " + this.verCantidadPasajeros() );
+        this.verCantidadPasajeros();
     }
     
-    public void bajarPasajero() {
-        this.lugaresDisponibles++;
-        if(this.lugaresDisponibles == 0) {
+    public Empleado bajarPasajero() {
+        if(this.lugaresDisponibles() <= 0) {
             System.err.println("El Micro está vacio");
             this.primerPasajero = null;
+            return null;
+        }else{
+            if(this.pasajerosParados > 0) {
+                this.pasajerosSentados--;
+            } else {
+                this.pasajerosParados--;
+            }
+            Empleado emp = pasajeros.get(pasajeros.size()-1);
+            pasajeros.remove(emp);
+            
+            return emp;
         }
     }
     
-    public int  verCantidadPasajeros() {
-        int cantPasaje = 0;
-        for (int i = 0; i < this.pasajeros.length; i++) {
-            if(this.pasajeros[i] != null) {
-                cantPasaje++;
-            }
-        }
-        return cantPasaje;
+    public void  verCantidadPasajeros() {
+        System.out.println("La cantidad de pasajeros es >> " + this.pasajeros.size());
+    }
+    
+    public int lugaresDisponibles(){
+        return this.lugaresParados - this.pasajerosParados + this.lugaresSentados - this.pasajerosSentados;
     }
     
 
